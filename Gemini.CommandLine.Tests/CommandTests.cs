@@ -12,31 +12,68 @@ namespace Gemini.CommandLine.Tests
         // ReSharper disable UnusedMember.Local
         private class ExampleCommandType
         {
-            public static bool ExampleCommandRun;
-            public static bool ExampleCommandWithOptionsRun;
-            public static bool StaticCommandRun;
-            public static bool StaticCommandWithOptionsRun;
+            public static bool ExampleCommandRan;
+            public static bool ExampleCommandWithOptionsRan;
+            public static bool StaticCommandRan;
+            public static bool StaticCommandWithOptionsRan;
+            public static bool CommandWithNameRan;
+            public static bool TestThePropertyRan;
+            public static bool TestTheConstructorRan;
+
+            [Argument("TP")]
+            public TimeSpan TestProperty { get; set; }
+
+            public bool TestBoolean { get; private set; }
+
+            public ExampleCommandType()
+            {                
+            }
+
+            public ExampleCommandType(bool tp)
+            {
+                TestBoolean = tp;
+            }
 
             public void ExampleCommand()
             {
-                ExampleCommandRun = true;
+                ExampleCommandRan = true;
             }
 
             public void ExampleCommand(string options)
             {
-                ExampleCommandWithOptionsRun = true;
+                ExampleCommandWithOptionsRan = true;
             }
 
             public static void StaticCommand()
             {
-                StaticCommandRun = true;
+                StaticCommandRan = true;
             }
 
             public static void StaticCommand(string options)
             {
-                StaticCommandWithOptionsRun = true;
+                StaticCommandWithOptionsRan = true;
+            }
+
+            [CommandName("NamedCommand")]
+            public void CommandWithName([Argument("I")] int index)
+            {
+                if (index == 12)
+                {
+                    CommandWithNameRan = true;
+                }
+            }
+
+            public void TestTheProperty()
+            {
+                TestThePropertyRan = this.TestProperty > TimeSpan.FromDays(1);                
+            }
+
+            public void TestTheConstructor()
+            {
+                TestTheConstructorRan = this.TestBoolean;
             }
         }
+
         // ReSharper restore UnusedMember.Local
 
 
@@ -61,7 +98,7 @@ namespace Gemini.CommandLine.Tests
             var command = Command.FromArguments("ExampleCommandType.ExampleCommand");
 
             Assert.IsTrue(command.Run(types));
-            Assert.IsTrue(ExampleCommandType.ExampleCommandRun);
+            Assert.IsTrue(ExampleCommandType.ExampleCommandRan);
         }
 
         [TestMethod]
@@ -71,7 +108,7 @@ namespace Gemini.CommandLine.Tests
             var command = Command.FromArguments("ExampleCommandType.ExampleCommand", "/options");
 
             Assert.IsTrue(command.Run(types));
-            Assert.IsTrue(ExampleCommandType.ExampleCommandWithOptionsRun);
+            Assert.IsTrue(ExampleCommandType.ExampleCommandWithOptionsRan);
         }
 
         [TestMethod]
@@ -81,7 +118,7 @@ namespace Gemini.CommandLine.Tests
             var command = Command.FromArguments("ExampleCommandType.StaticCommand");
 
             Assert.IsTrue(command.Run(types));
-            Assert.IsTrue(ExampleCommandType.StaticCommandRun);
+            Assert.IsTrue(ExampleCommandType.StaticCommandRan);
         }
 
         [TestMethod]
@@ -91,7 +128,38 @@ namespace Gemini.CommandLine.Tests
             var command = Command.FromArguments("ExampleCommandType.StaticCommand", "/options");
 
             Assert.IsTrue(command.Run(types));
-            Assert.IsTrue(ExampleCommandType.StaticCommandWithOptionsRun);
+            Assert.IsTrue(ExampleCommandType.StaticCommandWithOptionsRan);
         }
+
+        [TestMethod]
+        public void CommandWithNameCanRun()
+        {
+            var types = new[] { typeof(ExampleCommandType) };
+            var command = Command.FromArguments("NamedCommand", "/I:12");
+
+            Assert.IsTrue(command.Run(types));
+            Assert.IsTrue(ExampleCommandType.CommandWithNameRan);
+        }
+
+        [TestMethod]
+        public void TestThePropertyCanRun()
+        {
+            var types = new[] { typeof(ExampleCommandType) };
+            var command = Command.FromArguments("TestTheProperty", "/TP:12");
+
+            Assert.IsTrue(command.Run(types));
+            Assert.IsTrue(ExampleCommandType.TestThePropertyRan);
+        }
+
+        [TestMethod]
+        public void TestTheConstructorCanRun()
+        {
+            var types = new[] { typeof(ExampleCommandType) };
+            var command = Command.FromArguments("TestTheConstructor", "/tp");
+
+            Assert.IsTrue(command.Run(types));
+            Assert.IsTrue(ExampleCommandType.TestTheConstructorRan);
+        }
+
     }
 }

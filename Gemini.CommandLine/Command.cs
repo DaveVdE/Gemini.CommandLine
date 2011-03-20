@@ -109,7 +109,7 @@ namespace Gemini.CommandLine
                 {
                     if (string.IsNullOrWhiteSpace(text))
                     {
-                        value = false;
+                        value = true;
                         return true;
                     }
 
@@ -195,13 +195,13 @@ namespace Gemini.CommandLine
                 {
                     object[] constructorParameters;
 
-                    if (!BindParameters(constructor.GetParameters(), out constructorParameters))
+                    if (BindParameters(constructor.GetParameters(), out constructorParameters))
                     {
-                        continue;
-                    }
+                        instance = constructor.Invoke(constructorParameters);
+                        BindProperties(type.GetProperties(), instance);
 
-                    instance = constructor.Invoke(constructorParameters);
-                    BindProperties(type.GetProperties(), instance);                    
+                        break;
+                    }
                 }
 
                 if (instance == null)
