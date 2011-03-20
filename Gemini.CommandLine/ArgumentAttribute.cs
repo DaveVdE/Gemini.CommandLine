@@ -21,9 +21,9 @@ namespace Gemini.CommandLine
             IsOptional = isOptional;
         }
 
-        public static IEnumerable<ArgumentAttribute> ForMethod(MemberInfo member)
+        public static IEnumerable<ArgumentAttribute> For(ICustomAttributeProvider provider)
         {
-            return member.GetCustomAttributes(true).OfType<ArgumentAttribute>();
+            return provider.GetCustomAttributes(true).OfType<ArgumentAttribute>();
         }
     }
 }
