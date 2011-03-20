@@ -55,9 +55,14 @@ namespace Gemini.CommandLine
         private IEnumerable<ConstructorInfo> FindSuitableConstructors(Type type)
         {
             return type.GetConstructors().Where(constructor =>
-                constructor.GetParameters().All(parameter => 
-                    Options.ContainsKey(parameter.Name) ||
-                    ArgumentAttribute.For(parameter).Any(attribute => Options.ContainsKey(attribute.Name))));
+                constructor.GetParameters().All(parameter =>
+                {
+                    var attributes = ArgumentAttribute.For(parameter);
+
+                    return attributes.Any() 
+                        ? attributes.Any(attribute => Options.ContainsKey(attribute.Name)) 
+                        : Options.ContainsKey(parameter.Name);
+                }));
         }
 
         private bool BindProvider(Type type, string providerName, ICustomAttributeProvider provider, out object value)
@@ -72,12 +77,16 @@ namespace Gemini.CommandLine
 
             if (converter == null)
             {
-                string message = string.Format("No conversion possible for '{0}'.", providerName);
+                var message = string.Format("No conversion possible for '{0}'.", providerName);
                 throw new InvalidOperationException(message);
             }
 
-            var attributes = ArgumentAttribute.For(provider).Select(attribute => Tuple.Create(attribute, attribute.Name))
-                .Concat(new[] {new Tuple<ArgumentAttribute, string>(null, providerName)});
+            var attributes = ArgumentAttribute.For(provider).Select(attribute => Tuple.Create(attribute, attribute.Name));
+
+            if (!attributes.Any())
+            {
+                attributes = new[] {new Tuple<ArgumentAttribute, string>(null, providerName)};
+            }
 
             foreach (var pair in attributes)
             {
