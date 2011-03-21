@@ -57,6 +57,11 @@ namespace Gemini.CommandLine
             return type.GetConstructors().Where(constructor =>
                 constructor.GetParameters().All(parameter =>
                 {
+                    if (parameter.ParameterType == typeof(Command))
+                    {
+                        return true;
+                    }
+
                     var attributes = ArgumentAttribute.For(parameter);
 
                     return attributes.Any() 
@@ -75,7 +80,7 @@ namespace Gemini.CommandLine
 
             var converter = TypeDescriptor.GetConverter(type);
 
-            if (converter == null)
+            if (converter == null || !converter.CanConvertFrom(typeof(string)))
             {
                 var message = string.Format("No conversion possible for '{0}'.", providerName);
                 throw new InvalidOperationException(message);
@@ -117,7 +122,7 @@ namespace Gemini.CommandLine
                     return true;
                 }
 
-                value = converter.ConvertFrom(text);
+                value = converter.ConvertFromInvariantString(text);
                 return true;
             }
 

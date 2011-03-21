@@ -11,10 +11,6 @@ namespace Gemini.CommandLine
         public string Name { get; set; }
         public bool IsOptional { get; set; }
 
-        public ArgumentAttribute()
-        {
-        }
-
         public ArgumentAttribute(string name, bool isOptional = false)
         {
             Name = name;

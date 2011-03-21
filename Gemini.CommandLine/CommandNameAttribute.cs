@@ -10,10 +10,6 @@ namespace Gemini.CommandLine
     {
         public string Name { get; set; }
 
-        public CommandNameAttribute()
-        {
-        }
-
         public CommandNameAttribute(string name)
         {
             Name = name;

@@ -1,0 +1,9 @@
+﻿How it works:
+
+YourProgram.exe [TypeName.]MethodName [/option[:value]]...
+
+This will look for the specified method (optionally from the specified type). 
+When the method is not static, an instance is created while trying to map the named arguments to the constructor.
+When the instance is created, properties that are specified are set. 
+The remaining arguments are used to find the correct overload of the method. Methods can have optional arguments, using nullablle (reference or Nullable<T>) types.
+Remaining arguments that are not recognized as options can be retrieved by including a parameter of type string[] named 'arguments'.

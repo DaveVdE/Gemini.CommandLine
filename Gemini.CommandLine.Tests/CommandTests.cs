@@ -2,6 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Gemini.CommandLine.Tests
@@ -10,6 +11,8 @@ namespace Gemini.CommandLine.Tests
     public class CommandTests
     {
         // ReSharper disable UnusedMember.Local
+        // ReSharper disable MemberCanBePrivate.Local
+        
         private class ExampleCommandType
         {
             public static bool ExampleCommandRan;
@@ -19,19 +22,27 @@ namespace Gemini.CommandLine.Tests
             public static bool CommandWithNameRan;
             public static bool TestThePropertyRan;
             public static bool TestTheConstructorRan;
+            public static bool TestTheConstructor2Ran;
 
             [Argument("TP")]
             public TimeSpan TestProperty { get; set; }
-
-            public bool TestBoolean { get; private set; }
+            public bool TestBoolean { get; set; }
+            public float Pi { get; set; }
+            public Command Command { get; set; }
 
             public ExampleCommandType()
             {                
             }
 
-            public ExampleCommandType(bool tp)
+            public ExampleCommandType([Argument("tp")] bool tp)
             {
                 TestBoolean = tp;
+            }
+
+            public ExampleCommandType(float pi, Command command)
+            {
+                Pi = pi;
+                Command = command;
             }
 
             public void ExampleCommand()
@@ -72,10 +83,33 @@ namespace Gemini.CommandLine.Tests
             {
                 TestTheConstructorRan = this.TestBoolean;
             }
+
+            public void TestTheConstructor2()
+            {
+                TestTheConstructor2Ran = Command != null && Pi > 3;
+            }
+
+            public void TheImpossibleCommand([Argument("impossible")] object impossible)
+            {
+                Assert.Fail();
+            }
         }
 
-        // ReSharper restore UnusedMember.Local
+        private class CommandTypeWithoutDefaultConstructor
+        {
+            public CommandTypeWithoutDefaultConstructor(string example)
+            {
+                
+            }
 
+            public void Test()
+            {
+                Assert.Fail();
+            }
+        }
+
+        // ReSharper restore MemberCanBePrivate.Local
+        // ReSharper restore UnusedMember.Local
 
         [TestMethod]
         public void CommandCanFindNamedMethods()
@@ -161,5 +195,32 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.TestTheConstructorRan);
         }
 
+        [TestMethod]
+        public void TestTheConstructorCanRun2()
+        {
+            var types = new[] { typeof(ExampleCommandType) };
+            var command = Command.FromArguments("TestTheConstructor2", "/pi:3.14");
+
+            Assert.IsTrue(command.Run(types));
+            Assert.IsTrue(ExampleCommandType.TestTheConstructor2Ran);
+        }
+
+        [TestMethod]
+        public void TheImpossibleCommandCantWork()
+        {
+            var types = new[] { typeof(ExampleCommandType) };
+            var command = Command.FromArguments("TheImpossibleCommand", "/impossible:yes");
+
+            Expect.Throw<InvalidOperationException>(() => command.Run(types));
+        }
+
+        [TestMethod]
+        public void TheImpossibleCommandTypeCantWork()
+        {
+            var types = new[] {typeof (CommandTypeWithoutDefaultConstructor)};
+            var command = Command.FromArguments("Test");
+
+            Expect.Throw<InvalidOperationException>(() => command.Run(types));
+        }
     }
 }
