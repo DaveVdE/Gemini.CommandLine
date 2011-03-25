@@ -43,6 +43,7 @@
     <Compile Include="ArgumentAttribute.cs" />
     <Compile Include="CommandNameAttribute.cs" />
     <Compile Include="MethodFilters.cs" />
+    <Compile Include="MyTimeSpanConverter.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

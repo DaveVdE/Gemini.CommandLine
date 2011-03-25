@@ -50,6 +50,7 @@
     <Compile Include="ExpectTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParserTests.cs" />
+    <Compile Include="TimeSpanConverterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Gemini.CommandLine\Gemini.CommandLine.csproj">
