@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommandTests.cs" />
+    <Compile Include="ExampleCommandType.cs" />
     <Compile Include="Expect.cs" />
     <Compile Include="ExpectTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

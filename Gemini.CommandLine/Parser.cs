@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Gemini.CommandLine
 {
@@ -26,7 +23,8 @@ namespace Gemini.CommandLine
             {
                 if (argument.StartsWith(SwitchIndicator))
                 {
-                    var argumentIndex = argument.IndexOf(ArgumentSeparator);
+                    var argumentIndex = argument.IndexOf(ArgumentSeparator, StringComparison.Ordinal);
+
                     if (argumentIndex != -1)
                     {
                         command.Options[argument.Substring(SwitchIndicator.Length, argumentIndex - SwitchIndicator.Length)] =
@@ -41,7 +39,7 @@ namespace Gemini.CommandLine
                 {
                     if (command.Name == null)
                     {
-                        var memberIndex = argument.IndexOf(MemberIndicator);
+                        var memberIndex = argument.IndexOf(MemberIndicator, StringComparison.Ordinal);
                         if (memberIndex != -1)
                         {
                             command.TypeName = argument.Substring(0, memberIndex);

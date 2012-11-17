@@ -12,11 +12,13 @@ namespace Gemini.CommandLine
         public string TypeName { get; set; }
         public string Name { get; set; }
         public List<string> Arguments { get; set; }
+        public Action<string> HelpWriter { get; set; }
 
         public Command()
         {
             Options = new Dictionary<string, string>();
             Arguments = new List<string>();
+            HelpWriter = Console.WriteLine;
         }
 
         public static Command FromArguments(params string[] arguments)
@@ -227,10 +229,22 @@ namespace Gemini.CommandLine
             return false;
         }
 
-        public bool Run(Type[] types)
+        /// <summary>
+        /// Run the command on the most suitable method found on the specified types.
+        /// </summary>
+        /// <param name="types">
+        /// The types to examine for suitable methods. 
+        /// If this parameter is null, any public type on the calling assembly is considered.
+        /// </param>
+        /// <returns></returns>
+        public bool Run(params Type[] types)
         {
-            var methods = FindSuitableMethods(types);
+            if (types == null || types.Length == 0)
+            {
+                types = Assembly.GetCallingAssembly().GetTypes().Where(type => type.IsPublic).ToArray();
+            }
 
+            var methods = FindSuitableMethods(types);
             return methods.Any(Run);
         }
     }
