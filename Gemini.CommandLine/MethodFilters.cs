@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Gemini.CommandLine
 {
@@ -11,7 +10,7 @@ namespace Gemini.CommandLine
         {
             return qry.Where(method => 
                 method.Name == name ||
-                CommandNameAttribute.ForMethod(method).Where(attribute => attribute.Name == name).Any());
+                CommandNameAttribute.ForMethod(method).Any(attribute => attribute.Name == name));
         }
     }
 }

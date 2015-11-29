@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Gemini.CommandLine.Tests
 {
@@ -68,12 +66,12 @@ namespace Gemini.CommandLine.Tests
 
         public void TestTheProperty()
         {
-            TestThePropertyRan = this.TestProperty > TimeSpan.FromDays(1);                
+            TestThePropertyRan = TestProperty > TimeSpan.FromDays(1);                
         }
 
         public void TestTheConstructor()
         {
-            TestTheConstructorRan = this.TestBoolean;
+            TestTheConstructorRan = TestBoolean;
         }
 
         public void TestTheConstructor2()
@@ -83,7 +81,7 @@ namespace Gemini.CommandLine.Tests
 
         public void TheImpossibleCommand([Argument("impossible")] object impossible)
         {
-            Assert.Fail();
+            throw new NotSupportedException();
         }
 
         public void ForAnyPublicType()

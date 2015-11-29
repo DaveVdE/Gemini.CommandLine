@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -23,7 +25,7 @@ namespace Gemini.CommandLine
 
         public static Command FromArguments(params string[] arguments)
         {
-            return (new Parser()).Parse(arguments);
+            return new Parser().Parse(arguments);
         }
 
         public IEnumerable<MethodInfo> FindSuitableMethods(Type[] types)
@@ -34,8 +36,7 @@ namespace Gemini.CommandLine
 
                 if (!types.Any())
                 {
-                    var message = string.Format("No type named '{0}' could be found.", TypeName);
-                    throw new InvalidOperationException(message);
+                    throw new InvalidOperationException($"No type named '{TypeName}' could be found.");
                 }
             }
 
@@ -54,6 +55,7 @@ namespace Gemini.CommandLine
         /// Find all the constructors for the specified <see cref="Type" /> that have all their parameters
         /// represented as an option.
         /// </summary>
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private IEnumerable<ConstructorInfo> FindSuitableConstructors(Type type)
         {
             return type.GetConstructors().Where(constructor =>
@@ -72,6 +74,7 @@ namespace Gemini.CommandLine
                 }));
         }
 
+        [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         private bool BindProvider(Type type, string providerName, ICustomAttributeProvider provider, out object value)
         {
             if (type == typeof(Command))
@@ -82,10 +85,9 @@ namespace Gemini.CommandLine
 
             var converter = TypeDescriptor.GetConverter(type);
 
-            if (converter == null || !converter.CanConvertFrom(typeof(string)))
+            if (!converter.CanConvertFrom(typeof(string)))
             {
-                var message = string.Format("No conversion possible for '{0}'.", providerName);
-                throw new InvalidOperationException(message);
+                throw new InvalidOperationException($"No conversion possible for '{providerName}'.");
             }
 
             var attributes = ArgumentAttribute.For(provider).Select(attribute => Tuple.Create(attribute, attribute.Name));
@@ -188,6 +190,8 @@ namespace Gemini.CommandLine
 
         public bool Run(MethodInfo methodInfo)
         {
+            Debug.Assert(methodInfo.ReflectedType != null);
+
             var type = methodInfo.ReflectedType;
             object instance = null;
 
@@ -195,7 +199,7 @@ namespace Gemini.CommandLine
             {
                 // Find all suitable constructors, then order by complexity.
                 var constructors = FindSuitableConstructors(type)
-                    .OrderByDescending(c => c.GetParameters().Count())
+                    .OrderByDescending(c => c.GetParameters().Length)
                     .ToArray();
 
                 foreach (var constructor in constructors)
@@ -213,20 +217,17 @@ namespace Gemini.CommandLine
 
                 if (instance == null)
                 {
-                    var message = string.Format("No suitable constructor found for type '{0}'.", type);
-                    throw new InvalidOperationException(message);
+                    throw new InvalidOperationException($"No suitable constructor found for type '{type}'.");
                 }
             }
 
             object[] parameters;
-            
-            if (BindParameters(methodInfo.GetParameters(), out parameters))
-            {
-                methodInfo.Invoke(instance, parameters);
-                return true;
-            }
 
-            return false;
+            if (!BindParameters(methodInfo.GetParameters(), out parameters)) return false;
+
+            methodInfo.Invoke(instance, parameters);
+
+            return true;
         }
 
         /// <summary>

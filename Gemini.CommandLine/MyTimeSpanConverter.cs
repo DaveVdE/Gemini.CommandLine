@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gemini.CommandLine
@@ -14,9 +11,9 @@ namespace Gemini.CommandLine
 
         private static TimeSpan InternalConvert(CultureInfo culture, string input)
         {
-            Regex findGroupsExpression = new Regex(FindGroups);
-            MatchCollection matches = findGroupsExpression.Matches(input);
-            TimeSpan result = TimeSpan.Zero;
+            var findGroupsExpression = new Regex(FindGroups);
+            var matches = findGroupsExpression.Matches(input);
+            var result = TimeSpan.Zero;
 
             foreach (Match match in matches)
             {
@@ -51,15 +48,10 @@ namespace Gemini.CommandLine
 
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {
-            if (sourceType == typeof(string))
-            {
-                return true;
-            }
-
-            return base.CanConvertFrom(context, sourceType);
+            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
         }
 
-        public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             return InternalConvert(culture, Convert.ToString(value));
         }

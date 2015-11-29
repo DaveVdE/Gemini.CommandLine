@@ -1,16 +1,12 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Gemini.CommandLine.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class TimeSpanConverterTests
     {
-        [TestMethod]
+        [Test]
         public void TestMethod1()
         {
             const string input = "7d 12h";

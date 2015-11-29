@@ -10,11 +10,13 @@ namespace Gemini.CommandLine.Tests
     {
         private class CommandTypeWithoutDefaultConstructor
         {
+            // ReSharper disable once UnusedParameter.Local because it's needed for this test.
             public CommandTypeWithoutDefaultConstructor(string example)
             {
                 
             }
 
+            // ReSharper disable once UnusedMember.Local because it's needed for this test.
             public void Test()
             {
                 Assert.Fail();
