@@ -1,18 +1,13 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Gemini.CommandLine.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class CommandTests
     {
-        // ReSharper disable UnusedMember.Local
-        // ReSharper disable MemberCanBePrivate.Local
-
         private class CommandTypeWithoutDefaultConstructor
         {
             public CommandTypeWithoutDefaultConstructor(string example)
@@ -26,10 +21,7 @@ namespace Gemini.CommandLine.Tests
             }
         }
 
-        // ReSharper restore MemberCanBePrivate.Local
-        // ReSharper restore UnusedMember.Local
-
-        [TestMethod]
+        [Test]
         public void CommandCanFindNamedMethods()
         {
             var types = new[] {typeof (ExampleCommandType)};
@@ -39,11 +31,10 @@ namespace Gemini.CommandLine.Tests
             Assert.IsNotNull(methods);
             Assert.AreEqual(2, methods.Length);
             Assert.IsTrue(methods.All(method => method.Name == "ExampleCommand"));
-
-            Expect.Throw<InvalidOperationException>(() => command.FindSuitableMethods(new Type[] {}));
+            Assert.Throws<InvalidOperationException>(() => command.FindSuitableMethods(new Type[] {}));
         }
 
-        [TestMethod]
+        [Test]
         public void CommandCanRun()
         {
             var types = new[] {typeof (ExampleCommandType)};
@@ -53,7 +44,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.ExampleCommandRan);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandWithOptionsCanRun()
         {
             var types = new[] {typeof (ExampleCommandType)};
@@ -63,7 +54,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.ExampleCommandWithOptionsRan);
         }
 
-        [TestMethod]
+        [Test]
         public void StaticCommandCanRun()
         {
             var types = new[] {typeof (ExampleCommandType)};
@@ -73,7 +64,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.StaticCommandRan);
         }
 
-        [TestMethod]
+        [Test]
         public void StaticCommandWithOptionsCanRun()
         {
             var types = new[] { typeof(ExampleCommandType) };
@@ -83,7 +74,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.StaticCommandWithOptionsRan);
         }
 
-        [TestMethod]
+        [Test]
         public void CommandWithNameCanRun()
         {
             var types = new[] { typeof(ExampleCommandType) };
@@ -93,7 +84,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.CommandWithNameRan);
         }
 
-        [TestMethod]
+        [Test]
         public void TestThePropertyCanRun()
         {
             var types = new[] { typeof(ExampleCommandType) };
@@ -103,7 +94,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.TestThePropertyRan);
         }
 
-        [TestMethod]
+        [Test]
         public void TestTheConstructorCanRun()
         {
             var types = new[] { typeof(ExampleCommandType) };
@@ -113,7 +104,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.TestTheConstructorRan);
         }
 
-        [TestMethod]
+        [Test]
         public void TestTheConstructorCanRun2()
         {
             var types = new[] { typeof(ExampleCommandType) };
@@ -123,25 +114,25 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.TestTheConstructor2Ran);
         }
 
-        [TestMethod]
+        [Test]
         public void TheImpossibleCommandCantWork()
         {
             var types = new[] { typeof(ExampleCommandType) };
             var command = Command.FromArguments("TheImpossibleCommand", "/impossible:yes");
 
-            Expect.Throw<InvalidOperationException>(() => command.Run(types));
+            Assert.Throws<InvalidOperationException>(() => command.Run(types));
         }
 
-        [TestMethod]
+        [Test]
         public void TheImpossibleCommandTypeCantWork()
         {
             var types = new[] {typeof (CommandTypeWithoutDefaultConstructor)};
             var command = Command.FromArguments("Test");
 
-            Expect.Throw<InvalidOperationException>(() => command.Run(types));
+            Assert.Throws<InvalidOperationException>(() => command.Run(types));
         }
 
-        [TestMethod]
+        [Test]
         public void CommandRunsForAnyPublicType()
         {
             Command.FromArguments("ForAnyPublicType").Run();
@@ -149,7 +140,7 @@ namespace Gemini.CommandLine.Tests
             Assert.IsTrue(ExampleCommandType.ForAnyPublicTypeRan);
         }
 
-        [TestMethod]
+        [Test]
         public void NotSpecifyingAnyArgumentsShowsListOfMethods()
         {
             var messages = new List<string>();

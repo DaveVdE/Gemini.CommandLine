@@ -2,17 +2,17 @@
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Gemini.CommandLine.Tests
 {
     /// <summary>
     /// Summary description for UnitTest1
     /// </summary>
-    [TestClass]
+    [TestFixture]
     public class ParserTests
     {
-        [TestMethod]
+        [Test]
         public void ParserSupportsBasicCommands()
         {
             var parser = new Parser();
@@ -28,7 +28,7 @@ namespace Gemini.CommandLine.Tests
             Assert.AreEqual("InputFile3", command1.Arguments[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void ParserSupportsCommandWithTypename()
         {
             var parser = new Parser();
