@@ -256,12 +256,13 @@ namespace Gemini.CommandLine
         {
             var availableMethods = FindAvailableMethods(types);
 
-            foreach(var m in availableMethods)
+            foreach(var availableMethod in availableMethods)
             {
-                HelpWriter(m.Name);
-                foreach(var p in m.GetParameters())
+                HelpWriter(availableMethod.Name);
+
+                foreach(var parameter in availableMethod.GetParameters())
                 {
-                    HelpWriter(string.Format("\t{0} ({1})", p.Name, p.ParameterType.Name));
+                    HelpWriter(string.Format("\t{0} ({1})", parameter.Name, parameter.ParameterType.Name));
                 }
             }
 
