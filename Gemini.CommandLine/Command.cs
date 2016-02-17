@@ -26,7 +26,7 @@ namespace Gemini.CommandLine
             return (new Parser()).Parse(arguments);
         }
 
-        public IEnumerable<MethodInfo> FindSuitableMethods(Type[] types)
+        public IEnumerable<MethodInfo> FindAvailableMethods(Type[] types)
         {
             if (!string.IsNullOrEmpty(TypeName))
             {
@@ -39,15 +39,19 @@ namespace Gemini.CommandLine
                 }
             }
 
-            const BindingFlags bindingFlags = 
+            const BindingFlags bindingFlags =
                 BindingFlags.Public |
                 BindingFlags.Static |
                 BindingFlags.Instance |
                 BindingFlags.DeclaredOnly;
 
             return types.SelectMany(type => type.GetMethods(bindingFlags)
-                .WithName(Name)
                 .OrderByDescending(method => method.GetParameters().Length));
+        }
+
+        public IEnumerable<MethodInfo> FindSuitableMethods(Type[] types)
+        {
+            return FindAvailableMethods(types).WithName(Name);
         }
 
         /// <summary>
@@ -245,7 +249,23 @@ namespace Gemini.CommandLine
             }
 
             var methods = FindSuitableMethods(types);
-            return methods.Any(Run);
+            return methods.Any(Run) || ShowHelp(types);
+        }
+
+        private bool ShowHelp(Type[] types)
+        {
+            var availableMethods = FindAvailableMethods(types);
+
+            foreach(var m in availableMethods)
+            {
+                HelpWriter(m.Name);
+                foreach(var p in m.GetParameters())
+                {
+                    HelpWriter(string.Format("\t{0} ({1})", p.Name, p.ParameterType.Name));
+                }
+            }
+
+            return true;
         }
     }
 }
