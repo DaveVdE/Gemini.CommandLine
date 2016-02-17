@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Gemini.CommandLine</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Dave Van den Eynde</authors>
+    <owners>Dave Van den Eynde</owners>
+    <licenseUrl>http://geminicommandline.codeplex.com/license</licenseUrl>
+    <projectUrl>http://geminicommandline.codeplex.com/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Gemini.CommandLine lets you create commandline apps quickly.</description>
+    <tags>cli</tags>
+  </metadata>
+</package>
