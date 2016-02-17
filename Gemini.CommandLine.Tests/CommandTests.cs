@@ -156,6 +156,8 @@ namespace Gemini.CommandLine.Tests
             var command = Command.FromArguments();
             command.HelpWriter = messages.Add;
             command.Run(typeof (ExampleCommandType));
+
+            Assert.IsTrue(messages.Count > 0);
         }
     }
 }
