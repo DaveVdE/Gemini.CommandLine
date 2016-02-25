@@ -265,7 +265,7 @@ namespace Gemini.CommandLine
                     HelpWriter(string.Format("\t{0} ({1})", parameter.Name, parameter.ParameterType.Name));
                 }
 
-                HelpWriter(Environment.NewLine);
+                HelpWriter(string.Empty);
             }
 
             return true;
