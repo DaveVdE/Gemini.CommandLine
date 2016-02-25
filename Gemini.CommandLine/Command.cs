@@ -256,7 +256,7 @@ namespace Gemini.CommandLine
         {
             var availableMethods = FindAvailableMethods(types);
 
-            foreach(var availableMethod in availableMethods)
+            foreach(var availableMethod in availableMethods.OrderBy(m => m.Name))
             {
                 HelpWriter(availableMethod.Name);
 
