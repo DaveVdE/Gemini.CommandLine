@@ -256,7 +256,7 @@ namespace Gemini.CommandLine
         {
             var availableMethods = FindAvailableMethods(types);
 
-            foreach(var availableMethod in availableMethods)
+            foreach(var availableMethod in availableMethods.OrderBy(m => m.Name))
             {
                 HelpWriter(availableMethod.Name);
 
@@ -265,7 +265,7 @@ namespace Gemini.CommandLine
                     HelpWriter(string.Format("\t{0} ({1})", parameter.Name, parameter.ParameterType.Name));
                 }
 
-                HelpWriter(Environment.NewLine);
+                HelpWriter(string.Empty);
             }
 
             return true;
